@@ -1,0 +1,58 @@
+import Category from "@db/Category";
+import Accounts from "@db/Account";
+import Family from "@db/Family";
+import Order from "@db/Order";
+import OrderDetail from "@db/OrderDetail";
+import Payment from "@db/Payment";
+import PaymentMethod from "@db/PaymentMethod";
+import Product from "@db/Product";
+import Location from "@db/Location";
+import Service from "@db/Service";
+import Task from "@db/Task";
+import Visit from "@db/Visit";
+import VisitDetails from "@db/VisitDetails";
+import PaymentInvoices from "@db/PaymentInvoices";
+import PaymentMethods from "@db/PaymentMethods";
+import ProductLista from "../libraries/db/ProductLista";
+import ItemsExclude from "../libraries/db/ItemsExclude";
+import Stock from "../libraries/db/Stock";
+
+export const restartTables = async () => {
+  await Payment.dropTable();
+  await Location.dropTable();
+  await Category.dropTable();
+  await Accounts.dropTable();
+  await Family.dropTable();
+  await Order.dropTable();
+  await OrderDetail.dropTable();
+  await PaymentInvoices.dropTable();
+  await PaymentMethods.dropTable();
+  await PaymentMethod.dropTable();
+  await Product.dropTable();
+  await ProductLista.dropTable();
+  await Service.dropTable();
+  await Task.dropTable();
+  await Visit.dropTable();
+  await VisitDetails.dropTable();
+  await ItemsExclude.dropTable();
+  await Stock.dropTable();
+
+  await Location.createTable();
+  await Category.createTable();
+  await Accounts.createTable();
+  await Family.createTable();
+  await Order.createTable();
+  await OrderDetail.createTable();
+  await Payment.createTable();
+  await PaymentMethod.createTable();
+  await Product.createTable();
+  await Service.createTable();
+  await Task.createTable();
+  await Visit.createTable();
+  await VisitDetails.createTable();
+  await PaymentInvoices.createTable();
+  await PaymentMethods.createTable();
+  await ItemsExclude.createTable();
+  await Stock.createTable();
+
+};
