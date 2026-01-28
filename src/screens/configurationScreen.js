@@ -7,7 +7,6 @@ import { ConfigStyles } from "@styles/ConfigurationStyle";
 import ConfigItem from "@components/ConfigItem";
 
 import Configuration from "@db/Configuration";
-import { bulkInsert } from "@db/Functions";
 import { restartTables } from "../services/db";
 
 export default function ConfigurationScreen({ navigation, route }) {
@@ -65,32 +64,16 @@ export default function ConfigurationScreen({ navigation, route }) {
   };
 
   const handleSave = async () => {
-    let values = [];
     setSaving(true);
 
     try {
-      await Configuration.destroyAll();
-    } catch (e) {
-      setSaving(false);
-      setShowText(e?.message || "Error al borrar configuración.");
-      return;
-    }
-
-    let props = {};
-
-    for (let item in config) {
-      props = {
-        key: item,
-        value: item == "API_URI" ? config[item].toLowerCase() : config[item],
-      };
-      values.push(props);
-    }
-
-    try {
-      await await bulkInsert("config", values);
+      for (let item in config) {
+        const value = item == "API_URI" ? config[item].toLowerCase() : config[item];
+        await Configuration.setConfigValue(item, value);
+      }
       setShowText("Grabado correctamente");
     } catch (e) {
-      setShowText(e?.message || "Error al grabar configuración.");
+      setShowText(e?.message || "Error al grabar configuraciÃ³n.");
     } finally {
       setSaving(false);
     }

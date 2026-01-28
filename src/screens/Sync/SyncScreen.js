@@ -51,7 +51,7 @@ export default function SyncScreen({ navigation, route }) {
   const [showLoaderArticulosListas, setShowLoaderArticulosListas] = useState(true);
   const [statusMessage, setStatusMessage] = useState("");
 
-  const REQUEST_TIMEOUT_MS = 20000;
+  const REQUEST_TIMEOUT_MS = 60000;
   const fetchWithTimeout = async (endpoint, message) => {
     setStatusMessage(message);
     const timeout = new Promise((_, reject) =>
@@ -99,10 +99,23 @@ export default function SyncScreen({ navigation, route }) {
     data = await fetchWithTimeout(`seller/config/${login.user.user ?? "1"}`, "Sincronizando configuracion...");
 
     if (!data.error) {
-      data.data.map((item) => {
-        Configuration.setConfigValue(item.key, item.value);
+      const protectedKeys = new Set([
+        "API_URI",
+        "ALFA_ACCOUNT",
+        "PASSWORD_SYNC",
+        "USERNAME_SYNC",
+        "ALFA_DATABASE_ID",
+      ]);
+      for (const item of data.data) {
+        if (protectedKeys.has(item.key)) {
+          const currentValue = await Configuration.getConfigValue(item.key);
+          if (currentValue !== null && currentValue !== undefined && currentValue !== "") {
+            continue;
+          }
+        }
+        await Configuration.setConfigValue(item.key, item.value);
         // Configuration.setConfigValue(item.key, item.value == "SI" ? 1 : 0);
-      });
+      }
       updateStatus("configuration");
     } else {
       setErrorSync(data.message);
@@ -113,7 +126,7 @@ export default function SyncScreen({ navigation, route }) {
     // Category.createTable();
     Category.destroyAll();
 
-    data = await fetchWithTimeout("category/", "Sincronizando rubros...");
+    data = await fetchWithTimeout("category", "Sincronizando rubros...");
 
     if (!data.error) {
       data.data.map((item) => {
@@ -137,7 +150,7 @@ export default function SyncScreen({ navigation, route }) {
 
     objectArray = [];
 
-    data = await fetchWithTimeout("family/", "Sincronizando familias...");
+    data = await fetchWithTimeout("family", "Sincronizando familias...");
     if (!data.error) {
       data.data.map((item) => {
         props = {

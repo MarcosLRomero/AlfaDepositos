@@ -5,36 +5,44 @@ const wrapDatabase = (name, options, directory) => ({
     (async () => {
       const db = await openDatabaseAsync(name, options, directory);
       await db.withTransactionAsync(async () => {
+        const pending = [];
         const tx = {
-          executeSql: async (sql, params = [], onSuccess, onError) => {
-            try {
-              const stmt = await db.prepareAsync(sql);
-              const result = await stmt.executeAsync(...params);
-              let rows = [];
+          executeSql: (sql, params = [], onSuccess, onError) => {
+            const run = (async () => {
               try {
-                rows = await result.getAllAsync();
+                const stmt = await db.prepareAsync(sql);
+                const result = await stmt.executeAsync(...params);
+                let rows = [];
+                try {
+                  rows = await result.getAllAsync();
+                } catch (e) {
+                  rows = [];
+                }
+                const resultSet = {
+                  rows: { _array: rows, length: rows.length },
+                  insertId: result.lastInsertRowId,
+                  rowsAffected: result.changes,
+                };
+                await stmt.finalizeAsync();
+                if (onSuccess) {
+                  onSuccess(tx, resultSet);
+                }
+                return resultSet;
               } catch (e) {
-                rows = [];
+                if (onError) {
+                  return onError(tx, e);
+                }
+                throw e;
               }
-              const resultSet = {
-                rows: { _array: rows, length: rows.length },
-                insertId: result.lastInsertRowId,
-                rowsAffected: result.changes,
-              };
-              await stmt.finalizeAsync();
-              if (onSuccess) {
-                onSuccess(tx, resultSet);
-              }
-              return resultSet;
-            } catch (e) {
-              if (onError) {
-                return onError(tx, e);
-              }
-              throw e;
-            }
+            })();
+            pending.push(run);
+            return run;
           },
         };
         await fn(tx);
+        if (pending.length) {
+          await Promise.allSettled(pending);
+        }
       });
       if (success) {
         success();
