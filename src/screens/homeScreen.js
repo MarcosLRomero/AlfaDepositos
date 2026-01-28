@@ -226,7 +226,7 @@ export default function Home({ navigation }) {
       <View style={styles.footer}>
         <Text style={styles.compilationName}>Nro comp.: 1.3.0</Text>
         <Text style={styles.mainLabelName}>
-          VENDEDOR: {login.user.user} - {login.user.name}
+          VENDEDOR: {login?.user?.user ?? ""} - {login?.user?.name ?? ""}
         </Text>
       </View>
     </SafeAreaView>
