@@ -14,10 +14,12 @@ export default function ConfigurationScreen({ navigation, route }) {
   const { firstIn = null } = route?.params || {}
 
   const [config, setConfig] = useState({
-    API_URI: "http://alfanetac.ddns.net:7705/api/v2/",
+    //API_URI: "http://alfanetac.ddns.net:7705/api/v2/",
+    API_URI: 'http://192.168.1.36:5000/api/v2/',
     API_KEY: "",
     ALFA_ACCOUNT: "112010001",
-    ALFA_DATABASE_ID: "156",
+    //ALFA_DATABASE_ID: "156",
+    ALFA_DATABASE_ID: "3239",
     USERNAME_SYNC: "Administrador",
     PASSWORD_SYNC: "1",
     MODIFICA_CLASE_PRECIO: false,
@@ -67,8 +69,18 @@ export default function ConfigurationScreen({ navigation, route }) {
     setSaving(true);
 
     try {
+      await Configuration.createTable();
       for (let item in config) {
-        const value = item == "API_URI" ? config[item].toLowerCase() : config[item];
+        let value = config[item];
+        if (typeof value === "boolean") {
+          value = value ? 1 : 0;
+        }
+        if (value === null || value === undefined) {
+          value = "";
+        }
+        if (item == "API_URI" && typeof value === "string") {
+          value = value.toLowerCase();
+        }
         await Configuration.setConfigValue(item, value);
       }
       setShowText("Grabado correctamente");

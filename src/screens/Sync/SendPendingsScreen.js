@@ -158,7 +158,8 @@ export default function SendPendingsScreen({ navigation }) {
             return true;
           }
         } else {
-          setShowError("Ocurrió un error al enviar los comprobantes: " + response.message);
+          console.log("[SYNC][orders] response error", response);
+          setShowError("Ocurrió un error al enviar los comprobantes: " + (response.message || "Error desconocido"));
           return true;
         }
       } catch (error) {
@@ -171,7 +172,7 @@ export default function SendPendingsScreen({ navigation }) {
     return false;
   };
 
-  const sendPayments = async () => {
+  const _sendPayments = async () => {
     let payments = await Payment.query();
     let paymentsSend = [];
 
@@ -226,6 +227,21 @@ export default function SendPendingsScreen({ navigation }) {
   };
 
   const sendTasks = async () => {
+    setShowLoaderTasks(false);
+    return false;
+  };
+
+  const sendVisitsData = async () => {
+    setShowLoaderVisits(false);
+    return false;
+  };
+
+  const sendPayments = async () => {
+    setShowLoaderPayments(false);
+    return false;
+  };
+
+  const _sendTasks = async () => {
     let tasks = await Task.query();
     let tasksSend = [];
 
@@ -280,7 +296,7 @@ export default function SendPendingsScreen({ navigation }) {
     }
   };
 
-  const sendVisitsData = async () => {
+  const _sendVisitsData = async () => {
     let visitDetail = await VisitDetails.query();
     let visitsSend = [];
 
@@ -326,27 +342,7 @@ export default function SendPendingsScreen({ navigation }) {
   const handleSendPending = async () => {
     setShowLoaders(true);
 
-    let error = await sendNewAccounts();
-    if (error) {
-      return
-    }
-
-    error = await sendVisitsData();
-    if (error) {
-      return;
-    }
-
-    error = await sendOrders();
-    if (error) {
-      return;
-    }
-
-    error = await sendPayments();
-    if (error) {
-      return;
-    }
-
-    error = await sendTasks();
+    let error = await sendOrders();
     if (error) {
       return;
     }
@@ -379,11 +375,7 @@ export default function SendPendingsScreen({ navigation }) {
 
             {showLoaders && (
               <View>
-                <SyncItem showLoader={showLoaderAccounts} text="Nuevos proveedores" />
-                <SyncItem showLoader={showLoaderVisits} text="Datos visitas" />
-                <SyncItem showLoader={showLoaderOrders} text="Comprobantes" />
-                <SyncItem showLoader={showLoaderPayments} text="Cobranzas" />
-                <SyncItem showLoader={showLoaderTasks} text="Tareas" />
+              <SyncItem showLoader={showLoaderOrders} text="Comprobantes" />
               </View>
             )}
           </View>

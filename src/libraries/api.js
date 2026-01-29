@@ -190,6 +190,18 @@ export const Get = async (uri, token = "") => {
   }
 };
 
+const postWithTimeout = async (url, payload, headers, timeoutMs, label) => {
+  return await withTimeout(
+    fetch(url, {
+      method: "POST",
+      body: payload,
+      headers: headers,
+    }),
+    timeoutMs,
+    label
+  );
+};
+
 export const Post = async (uri, payload, token = "") => {
   const [API_URI] = await getApiConfig();
 
@@ -211,12 +223,12 @@ export const Post = async (uri, payload, token = "") => {
 
     const url = buildUrl(API_URI, uri);
     console.log("[API][POST]", url);
-    const response = await fetch(url, {
-      method: "POST",
-      body: payload,
-      headers: headers,
-    });
-
+    let response = await postWithTimeout(url, payload, headers, 20000, `POST ${uri}`);
+    if (!response?.ok) {
+      // retry once for transient errors
+      console.log("[API][POST][retry]", url, response?.status);
+      response = await postWithTimeout(url, payload, headers, 20000, `POST ${uri} retry`);
+    }
     let data = await response.json();
     return data;
   } catch (error) {

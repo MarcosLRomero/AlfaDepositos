@@ -1,6 +1,7 @@
 import { useCart } from '@hooks/useCart';
 import { useEffect } from 'react';
 import { ActivityIndicator, Button, FlatList, Text, TouchableOpacity, View, Alert } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ItemResumeCart from '../../components/Cart/ItemResumeCart';
 import Colors from '../../styles/Colors';
 import { getFontSize } from '../../utils/Metrics';
@@ -9,6 +10,16 @@ export default function ResumeCartScreen({ jumpTo }) {
     // const [estado, setEstado] = useState({ error: false, message: null })
     const { cartItems, getTotal, getSubtotal, account, getDetalleIva, save, getTotalDiscount, status, isSaving } = useCart();
     const navigation = useNavigation();
+    const insets = useSafeAreaInsets();
+
+    const formatAmount = (value) => {
+        const num = Number.parseFloat(value);
+        if (!Number.isFinite(num)) return "0,00";
+        return new Intl.NumberFormat("es-AR", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        }).format(num);
+    };
 
     const handleSaveOrder = () => {
         Alert.alert(
@@ -81,31 +92,31 @@ export default function ResumeCartScreen({ jumpTo }) {
                 }}
             />
 
-            <View style={{ position: "absolute", width: "100%", minHeight: 100, backgroundColor: "#dddddd", bottom: 0, zIndex: 99, paddingVertical: 5 }}>
+            <View style={{ position: "absolute", width: "100%", minHeight: 100, backgroundColor: "#dddddd", bottom: 0, zIndex: 99, paddingVertical: 5, paddingBottom: 5 + (insets?.bottom || 0) }}>
                 <View style={{ width: "100%", paddingHorizontal: 10 }}>
 
                     {(status?.message && status?.error) && <Text style={{ color: "white", backgroundColor: status?.error ? Colors.RED : Colors.GREEN, width: "100%", textAlign: "center", padding: 5 }}>{status.message}</Text>}
 
                     <View style={{ width: "100%", justifyContent: "space-between", flexDirection: "row", borderBottomColor: "#bebebe", borderBottomWidth: 1, paddingVertical: 3 }}>
                         <Text style={{ fontSize: getFontSize(15) }}>SUBTOTAL</Text>
-                        <Text style={{ fontSize: getFontSize(15) }}>${getSubtotal()}</Text>
+                        <Text style={{ fontSize: getFontSize(15) }}>${formatAmount(getSubtotal())}</Text>
                     </View>
 
                     <View style={{ width: "100%", justifyContent: "space-between", flexDirection: "row", borderBottomColor: "#bebebe", borderBottomWidth: 1, paddingVertical: 3 }}>
                         <Text style={{ fontSize: getFontSize(15) }}>DESCUENTO</Text>
-                        <Text style={{ fontSize: getFontSize(15) }}>${getTotalDiscount()}</Text>
+                        <Text style={{ fontSize: getFontSize(15) }}>${formatAmount(getTotalDiscount())}</Text>
                     </View>
 
                     {getDetalleIva()?.map((item, idx) => (
                         <View key={`iva_${idx}`} style={{ width: "100%", justifyContent: "space-between", flexDirection: "row", borderBottomColor: "#bebebe", borderBottomWidth: 1, paddingVertical: 3 }}>
                             <Text style={{ fontSize: getFontSize(15) }}>IVA {item.iva}%</Text>
-                            <Text style={{ fontSize: getFontSize(15) }}>${parseFloat(item.importe).toFixed(2)}</Text>
+                            <Text style={{ fontSize: getFontSize(15) }}>${formatAmount(item.importe)}</Text>
                         </View>
                     ))}
 
                     <View style={{ width: "100%", justifyContent: "space-between", flexDirection: "row" }}>
                         <Text style={{ fontSize: getFontSize(20), fontWeight: "bold" }}>TOTAL</Text>
-                        <Text style={{ fontSize: getFontSize(20), fontWeight: "bold" }}>${getTotal()}</Text>
+                        <Text style={{ fontSize: getFontSize(20), fontWeight: "bold" }}>${formatAmount(getTotal())}</Text>
                     </View>
                 </View>
 

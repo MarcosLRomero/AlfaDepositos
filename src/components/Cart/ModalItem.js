@@ -5,7 +5,7 @@ import { useCart } from '../../hooks/useCart';
 import Configuration from "@db/Configuration";
 import Colors from '../../styles/Colors';
 
-export default function ModalItem({ isVisible, setIsVisible, item, isNew = false }) {
+export default function ModalItem({ isVisible, setIsVisible, item, isNew = false, initialQuantity = null, onAdded = null }) {
     const [quantity, setQuantity] = useState(0)
     const [discount, setDiscount] = useState(0)
     const [bultos, setBultos] = useState(0)
@@ -24,54 +24,55 @@ export default function ModalItem({ isVisible, setIsVisible, item, isNew = false
     const { code, name } = item || { code: '', name: '' }
 
     const loadConfig = async () => {
-        let newConfig = {}
-
-        let data = await Configuration.getConfig("DESCUENTO_POR_ARTICULO");
-        newConfig.descPorArticulo = data[0].value;
-
-        data = await Configuration.getConfig("CONSULTA_STOCK_PEDIDOS");
-        newConfig.showStock = data[0].value;
-
-        // data = await Configuration.getConfig("BLOQUEA_STK_REAL_NEGATIVO");
-        // newConfig.bloqueaStockRealNegativo = data[0].value;
-
-        // data = await Configuration.getConfig("BLOQUEA_STK_COMPROMETIDO_NEGATIVO");
-        // newConfig.bloqueaStockComprometidoNegativo = data[0].value;
-
-        data = await Configuration.getConfig("PIDE_BULTOS");
-        newConfig.pideBultos = data[0].value;
-
-        data = await Configuration.getConfig("PIDE_PRECIO");
-        newConfig.pidePrecio = data[0].value;
-
-        setConfig(newConfig)
+        try {
+            await Configuration.createTable();
+            const newConfig = {
+                descPorArticulo: await Configuration.getConfigValue("DESCUENTO_POR_ARTICULO"),
+                showStock: await Configuration.getConfigValue("CONSULTA_STOCK_PEDIDOS"),
+                // bloqueaStockRealNegativo: await Configuration.getConfigValue("BLOQUEA_STK_REAL_NEGATIVO"),
+                // bloqueaStockComprometidoNegativo: await Configuration.getConfigValue("BLOQUEA_STK_COMPROMETIDO_NEGATIVO"),
+                pideBultos: await Configuration.getConfigValue("PIDE_BULTOS"),
+                pidePrecio: await Configuration.getConfigValue("PIDE_PRECIO"),
+            };
+            setConfig(newConfig);
+        } catch (e) {
+            setConfig({
+                descPorArticulo: "",
+                showStock: "",
+                pideBultos: "",
+                pidePrecio: ""
+            });
+        }
     };
 
     // const quantity = getCurrentQuantity(code) || 0
     useEffect(() => {
-        if (isVisible) {
-            // console.log(item)
-            if (item) {
-                setPrice(item[`price${account?.priceClass}`] + "")
-                setQuantity(item['cant_propuesta'] + "")
-            }
+        if (!isVisible) return;
 
-            loadConfig()
-            const pItem = getItem(code)
-
-            if (pItem && !isNew) {
-                setQuantity(pItem?.quantity == 0 ? "1" : pItem?.quantity + "")
-
-                if (pItem?.disc > 0) {
-                    setDiscount(pItem.disc + "")
-                }
-                setBultos(pItem?.bultos + "")
-
-                //TODO chequear esto
-                setPrice(pItem[`price${account?.priceClass}`] + "")
+        if (item) {
+            setPrice(item[`price${account?.priceClass}`] + "");
+            if (initialQuantity !== null && initialQuantity !== undefined && isNew) {
+                setQuantity(String(initialQuantity));
+            } else {
+                setQuantity(item["cant_propuesta"] + "");
             }
         }
-    }, [isVisible])
+
+        loadConfig();
+        const pItem = getItem(code);
+
+        if (pItem && !isNew) {
+            setQuantity(pItem?.quantity == 0 ? "1" : pItem?.quantity + "");
+
+            if (pItem?.disc > 0) {
+                setDiscount(pItem.disc + "");
+            }
+            setBultos(pItem?.bultos + "");
+
+            //TODO chequear esto
+            setPrice(pItem[`price${account?.priceClass}`] + "");
+        }
+    }, [isVisible, item, initialQuantity, account?.priceClass])
 
 
     return (
@@ -156,6 +157,7 @@ export default function ModalItem({ isVisible, setIsVisible, item, isNew = false
                             removeFromCart(item.code)
                         }
                         addToCart(item, quantity == 0 ? 1 : quantity, discount, bultos, price, !isNew)
+                        if (onAdded) onAdded()
                         setIsVisible(false)
                     }}>
                         <Text style={{ textAlign: "center", fontSize: getFontSize(15), fontWeight: "500" }}>AGREGAR A CARRITO</Text>

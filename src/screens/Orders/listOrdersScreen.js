@@ -26,6 +26,7 @@ export default function ListOrdersScreen({ navigation }) {
     const tcFilter = tab === "compras" ? "RP" : "IR";
     
     try {
+      await Order.createTable();
       // Importante: Asegúrate que tu método Order.findAll() soporte 
       // el filtrado por TC o filtra el resultado aquí:
       const data = await Order.findAll();

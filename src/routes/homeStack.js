@@ -29,13 +29,11 @@ import OrderTabNavigator from "../routes/OrderTabNavigator"; // Si este es un ta
 import OrderViewTab from './OrderViewTab';
 import CartProviderContainer from './CartProviderContainer';
 import CartStockContainer from './CartStockContainer';
-import { CartProvider } from '@hooks/useCart'; // Asegúrate de importar el Provider real
 
 const Stack = createStackNavigator();
 
 const HomeStack = () => (
   <NavigationContainer>
-    <CartProvider>
       <Stack.Navigator
         initialRouteName="HomeScreen"
         screenOptions={{
@@ -168,7 +166,6 @@ const HomeStack = () => (
           options={{ title: "Nuevo proveedor" }}
         />
       </Stack.Navigator>
-    </CartProvider>
   </NavigationContainer>
 );
 

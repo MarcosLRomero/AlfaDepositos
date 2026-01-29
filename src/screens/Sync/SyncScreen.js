@@ -86,6 +86,8 @@ export default function SyncScreen({ navigation, route }) {
     setShowButtonSync(false);
 
     try {
+    await Configuration.createTable();
+    await Configuration.setConfigValue("SYNC_IN_PROGRESS", 1);
     await createTables();
 
     // Omitidos de la sincronizacion
@@ -130,7 +132,7 @@ export default function SyncScreen({ navigation, route }) {
 
     // Rubros
     // Category.createTable();
-    Category.destroyAll();
+    await Category.destroyAll();
 
     data = await fetchWithTimeout("category", "Sincronizando rubros...");
 
@@ -143,7 +145,7 @@ export default function SyncScreen({ navigation, route }) {
         objectArray.push(props);
       });
 
-      bulkInsert("categories", objectArray);
+      await bulkInsert("categories", objectArray);
       updateStatus("rubros");
     } else {
       setErrorSync(data.message);
@@ -152,7 +154,7 @@ export default function SyncScreen({ navigation, route }) {
 
     //Familias
     // Family.createTable();
-    Family.destroyAll();
+    await Family.destroyAll();
 
     objectArray = [];
 
@@ -166,7 +168,7 @@ export default function SyncScreen({ navigation, route }) {
         objectArray.push(props);
       });
 
-      bulkInsert("families", objectArray);
+      await bulkInsert("families", objectArray);
       updateStatus("familias");
     } else {
       setErrorSync(data.message);
@@ -174,7 +176,7 @@ export default function SyncScreen({ navigation, route }) {
     }
 
     //Proveedores
-    Account.destroyAll();
+    await Account.destroyAll();
     let pages = 50;
 
     for (let page = 1; page <= pages; page++) {
@@ -208,7 +210,7 @@ export default function SyncScreen({ navigation, route }) {
           });
         }
 
-        bulkInsert("accounts", objectArray);
+        await bulkInsert("accounts", objectArray);
       } else {
         setErrorSync(data.message);
         return;
@@ -218,7 +220,7 @@ export default function SyncScreen({ navigation, route }) {
     updateStatus("proveedores");
 
     //Articulos
-    Product.destroyAll();
+    await Product.destroyAll();
     pages = 150;
 
     for (let page = 1; page <= pages; page++) {
@@ -256,7 +258,7 @@ export default function SyncScreen({ navigation, route }) {
             objectArray.push(props);
           });
         }
-        bulkInsert("products", objectArray);
+        await bulkInsert("products", objectArray);
       } else {
         setErrorSync(data.message);
         return;
@@ -270,6 +272,12 @@ export default function SyncScreen({ navigation, route }) {
     }
     } catch (e) {
       setErrorSync(e?.message || "Error en la sincronizacion.");
+    } finally {
+      try {
+        await Configuration.setConfigValue("SYNC_IN_PROGRESS", 0);
+      } catch (e) {
+        // ignore
+      }
     }
   }
 

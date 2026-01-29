@@ -31,12 +31,9 @@ export default function SelectAccountScreen({ jumpTo, route }) {
             name,
             priceClass,
             lista,
-        })
+        });
 
-        const timer = setTimeout(() => {
-            setIsLoadingAccount(false);
-        }, 2000);
-        return () => clearTimeout(timer);
+        setIsLoadingAccount(false);
     };
 
     const removeOrderFromDB = async () => {
@@ -87,7 +84,7 @@ export default function SelectAccountScreen({ jumpTo, route }) {
             }
 
             <TouchableOpacity onPress={() => removeAccount()} style={{ width: "100%", padding: 10, backgroundColor: Colors.GREEN, marginVertical: 10 }}>
-                <Text style={{ textAlign: "center", fontSize: getFontSize(17), color: "white", fontWeight: "600" }}>CAMBIAR CLIENTE</Text>
+                <Text style={{ textAlign: "center", fontSize: getFontSize(17), color: "white", fontWeight: "600" }}>CAMBIAR PROVEEDOR</Text>
             </TouchableOpacity>
 
             <View style={{ backgroundColor: "white", width: "100%", padding: 10 }}>
@@ -118,11 +115,11 @@ export default function SelectAccountScreen({ jumpTo, route }) {
                 </View>
 
                 <View style={{ flexDirection: "row", gap: 10, width: "100%", alignItems: "center", justifyContent: "space-between" }}>
-                    <View style={{ width: `${(documentData?.typeDocument == 'NP' || documentData?.typeDocument == 'RM') ? '48%' : '100%'}` }}>
+                    <View style={{ width: `${(documentData?.typeDocument == 'NP' || documentData?.typeDocument == 'RM') ? '48%' : '100%'}`, zIndex: 10 }}>
                         <DropdownSaleCondition value={documentData?.saleCondition} setValue={setSaleCondition} />
                     </View>
                     {(documentData?.typeDocument == 'NP' || documentData?.typeDocument == 'RM') &&
-                        <View style={{ width: "48%" }}>
+                        <View style={{ width: "48%", zIndex: 20 }}>
                             <DropdownInvoiceType value={documentData?.invoiceType} setValue={setInvoiceType} />
                         </View>
                     }
