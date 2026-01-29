@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+﻿import React, { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Alert, FlatList, Text, TextInput, View, StyleSheet, Modal as RNModal, TouchableOpacity } from "react-native";
-import { CameraView, useCameraPermissions } from "expo-camera"; // Importar escáner
+import { CameraView, useCameraPermissions } from "expo-camera"; // Importar escÃ¡ner
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 // ... tus otros imports
@@ -19,7 +19,7 @@ export default function ListaProductos({ priceClassSelected = 1, lista = '' }) {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [pendingSelected, setPendingSelected] = useState(null);
     
-    // Estados para el Escáner
+    // Estados para el EscÃ¡ner
     const [permission, requestPermission] = useCameraPermissions();
     const [scannerVisible, setScannerVisible] = useState(false);
 
@@ -52,7 +52,7 @@ export default function ListaProductos({ priceClassSelected = 1, lista = '' }) {
         }
     };
 
-    // 1. Solicitar permisos de cámara
+    // 1. Solicitar permisos de cÃ¡mara
     useEffect(() => {
         const init = async () => {
             try {
@@ -70,7 +70,7 @@ export default function ListaProductos({ priceClassSelected = 1, lista = '' }) {
         init();
     }, [effectivePriceClass, lista]);
 
-    // 2. Función unificada de búsqueda por código (para Enter y para Escáner)
+    // 2. FunciÃ³n unificada de bÃºsqueda por cÃ³digo (para Enter y para EscÃ¡ner)
     const findProductByCode = async (code, useFallback = true) => {
         // Intentamos buscar por codigoBarras primero o code
         let product = await withTimeout(Product.findByCode(code, lista), "findByCode", 12000);
@@ -114,7 +114,7 @@ export default function ListaProductos({ priceClassSelected = 1, lista = '' }) {
                 const validate = await passValidations(product[0]);
 
                 if (!validate) {
-                    Alert.alert('Alerta', 'Este artículo ya fue cargado en este o en otro comprobante.');
+                    Alert.alert('Alerta', 'Este artÃ­culo ya fue cargado en este o en otro comprobante.');
                     resetSearch();
                     return;
                 }
@@ -125,8 +125,8 @@ export default function ListaProductos({ priceClassSelected = 1, lista = '' }) {
                 setIsModalVisible(true);
             } else {
                 const msg = isPendingSelection
-                    ? 'El código no existe. Podés volver a escanear o reintentar.'
-                    : 'El código escaneado no existe.';
+                    ? 'El cÃ³digo no existe. PodÃ©s volver a escanear o reintentar.'
+                    : 'El cÃ³digo escaneado no existe.';
                 Alert.alert(
                     'Error',
                     msg,
@@ -154,8 +154,8 @@ export default function ListaProductos({ priceClassSelected = 1, lista = '' }) {
             const isPendingSelection =
                 pendingSelected && normalize(pendingSelected.code) === normalize(rawCode);
             const msg = isPendingSelection
-                ? 'No se pudo buscar el código. Podés reintentar.'
-                : (e?.message || 'No se pudo buscar el artículo.');
+                ? 'No se pudo buscar el cÃ³digo. PodÃ©s reintentar.'
+                : (e?.message || 'No se pudo buscar el artÃ­culo.');
             Alert.alert(
                 'Error',
                 msg,
@@ -200,13 +200,13 @@ export default function ListaProductos({ priceClassSelected = 1, lista = '' }) {
     const addPendingScan = () => {
         const code = String(scannedCode ?? "").trim();
         if (!code) {
-            Alert.alert("Error", "Código inválido.");
+            Alert.alert("Error", "CÃ³digo invÃ¡lido.");
             return;
         }
         const qty = parseInt(scannedQty, 10);
         const normalizedQty = Number.isFinite(qty) && qty > 0 ? qty : 0;
         if (!normalizedQty) {
-            Alert.alert("Error", "Ingrese una cantidad válida.");
+            Alert.alert("Error", "Ingrese una cantidad vÃ¡lida.");
             return;
         }
         setPendingScans((prev) => {
@@ -272,7 +272,7 @@ export default function ListaProductos({ priceClassSelected = 1, lista = '' }) {
                 console.log("[SCAN][process] addManyToCart(ms)", Date.now() - t2, "items", toAdd.length);
             }
 
-            // Si fallÃ³ la bÃºsqueda masiva, procesamos uno por uno y vamos quitando pendientes
+            // Si fallÃƒÂ³ la bÃƒÂºsqueda masiva, procesamos uno por uno y vamos quitando pendientes
             if ((rows || []).length === 0 && pendingScans.length > 0) {
                 missing = [];
                 duplicated = [];
@@ -305,7 +305,7 @@ export default function ListaProductos({ priceClassSelected = 1, lista = '' }) {
             }
             console.log("[SCAN][process] total(ms)", Date.now() - t0);
             if (missing.length > 0) {
-                const msg = `No existen: ${missing.join(", ")}. Podés reintentar la búsqueda.`;
+                const msg = `No existen: ${missing.join(", ")}. PodÃ©s reintentar la bÃºsqueda.`;
                 Alert.alert("No existen", msg, [
                     { text: "Cancelar", style: "cancel" },
                     {
@@ -322,7 +322,7 @@ export default function ListaProductos({ priceClassSelected = 1, lista = '' }) {
                 Alert.alert("Aviso", `Ya cargados: ${duplicated.join(", ")}`);
             }
         } catch (e) {
-            Alert.alert("Error", e?.message || "No se pudieron validar los artículos.");
+            Alert.alert("Error", e?.message || "No se pudieron validar los artÃ­culos.");
         } finally {
             setIsLoading(false);
             scanningRef.current = false;
@@ -335,8 +335,8 @@ export default function ListaProductos({ priceClassSelected = 1, lista = '' }) {
         const result = await requestPermission();
         if (result?.granted) return true;
         const message = result?.canAskAgain
-            ? "Debes permitir el acceso a la cÃ¡mara para escanear."
-            : "Permiso de cÃ¡mara denegado. Habilitalo desde los ajustes.";
+            ? "Debes permitir el acceso a la cÃƒÂ¡mara para escanear."
+            : "Permiso de cÃƒÂ¡mara denegado. Habilitalo desde los ajustes.";
         Alert.alert("Sin acceso", message);
         return false;
     };
@@ -353,7 +353,7 @@ export default function ListaProductos({ priceClassSelected = 1, lista = '' }) {
         setIsLoading(true);
         setProductSearchText(text);
         try {
-            // Respuesta rápida con cache
+            // Respuesta rÃ¡pida con cache
             if (text == "" && defaultProducts && defaultProducts.length > 0) {
                 setProductsSearch(defaultProducts);
             }
@@ -434,7 +434,7 @@ export default function ListaProductos({ priceClassSelected = 1, lista = '' }) {
                 }}
             />
 
-            {/* Modal de la Cámara */}
+            {/* Modal de la CÃ¡mara */}
             <RNModal visible={scannerVisible} animationType="slide">
                 <View style={styles.scannerContainer}>
                     <CameraView
@@ -445,7 +445,7 @@ export default function ListaProductos({ priceClassSelected = 1, lista = '' }) {
                         style={StyleSheet.absoluteFillObject}
                     />
                     <View style={styles.overlay}>
-                        <Text style={styles.scanText}>Encuadre el código de barras</Text>
+                        <Text style={styles.scanText}>Encuadre el cÃ³digo de barras</Text>
                         <TouchableOpacity 
                             onPress={() => {
                                 scanningRef.current = false;
@@ -459,22 +459,22 @@ export default function ListaProductos({ priceClassSelected = 1, lista = '' }) {
                 </View>
             </RNModal>
             <RNModal visible={scanModalVisible} animationType="fade" transparent={true}>
-                <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.5)", justifyContent: "center", alignItems: "center" }}>
-                    <View style={{ width: "85%", backgroundColor: "white", padding: 20, borderRadius: 10 }}>
-                        <Text style={{ fontSize: getFontSize(16), fontWeight: "600", marginBottom: 10 }}>Código escaneado</Text>
-                        <Text style={{ fontSize: getFontSize(18), marginBottom: 15 }}>{scannedCode}</Text>
-                        <Text style={{ fontSize: getFontSize(14), marginBottom: 5 }}>Cantidad</Text>
+                <View style={styles.scanModalBackdrop}>
+                    <View style={styles.scanModalCard}>
+                        <Text style={styles.scanTitle}>Código escaneado</Text>
+                        <Text style={styles.scanCode}>{scannedCode}</Text>
+                        <Text style={styles.scanLabel}>Cantidad</Text>
                         <TextInput
                             value={scannedQty}
                             onChangeText={setScannedQty}
                             keyboardType="number-pad"
-                            style={{ borderWidth: 1, borderColor: Colors.GREY, padding: 8, marginBottom: 15 }}
+                            style={styles.scanInput}
                         />
-                        <TouchableOpacity style={{ backgroundColor: Colors.GREEN, padding: 10, marginBottom: 10 }} onPress={addPendingScan}>
-                            <Text style={{ textAlign: "center", fontWeight: "600" }}>Agregar</Text>
+                        <TouchableOpacity style={styles.scanPrimaryBtn} onPress={addPendingScan}>
+                            <Text style={styles.scanPrimaryBtnText}>Agregar</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={{ backgroundColor: Colors.RED, padding: 10 }} onPress={() => setScanModalVisible(false)}>
-                            <Text style={{ textAlign: "center", fontWeight: "600", color: "white" }}>Cancelar</Text>
+                        <TouchableOpacity style={styles.scanSecondaryBtn} onPress={() => setScanModalVisible(false)}>
+                            <Text style={styles.scanSecondaryBtnText}>Cancelar</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -485,7 +485,7 @@ export default function ListaProductos({ priceClassSelected = 1, lista = '' }) {
                     ref={refInput}
                     autoFocus={true}
                     style={{ marginVertical: 10, width: "75%", padding: 10 }}
-                    placeholder="Descripción o código"
+                    placeholder="DescripciÃ³n o cÃ³digo"
                     onChangeText={(text) => loadProducts(text)}
                     onSubmitEditing={() => searchByCode(productSearchText)}
                     value={productSearchText}
@@ -499,7 +499,7 @@ export default function ListaProductos({ priceClassSelected = 1, lista = '' }) {
                         </TouchableOpacity>
                     )}
                     
-                    {/* Botón para abrir cámara */}
+                    {/* BotÃ³n para abrir cÃ¡mara */}
                     <TouchableOpacity 
                         onPress={async () => {
                             if (await ensureCameraPermission()) {
@@ -548,7 +548,7 @@ export default function ListaProductos({ priceClassSelected = 1, lista = '' }) {
             )}
             {(!isLoading && Array.isArray(productsSearch) && productsSearch.length === 0) && (
                 <View style={{ alignItems: "center", marginTop: 20 }}>
-                    <Text style={{ color: Colors.GREY }}>No hay artículos para mostrar.</Text>
+                    <Text style={{ color: Colors.GREY }}>No hay artÃ­culos para mostrar.</Text>
                     <TouchableOpacity onPress={() => loadProducts("")} style={{ marginTop: 10 }}>
                         <Text style={{ color: Colors.DBLUE, fontWeight: "600" }}>Reintentar</Text>
                     </TouchableOpacity>
@@ -607,8 +607,76 @@ const styles = StyleSheet.create({
         backgroundColor: 'red',
         padding: 15,
         borderRadius: 10
+    },
+    scanModalBackdrop: {
+        flex: 1,
+        backgroundColor: "rgba(0,0,0,0.55)",
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    scanModalCard: {
+        width: "86%",
+        backgroundColor: "white",
+        paddingVertical: 18,
+        paddingHorizontal: 18,
+        borderRadius: 16,
+        borderWidth: 1,
+        borderColor: "#e9e9e9"
+    },
+    scanTitle: {
+        fontSize: getFontSize(16),
+        fontWeight: "700",
+        color: "#1f2937",
+        marginBottom: 6
+    },
+    scanCode: {
+        fontSize: getFontSize(20),
+        fontWeight: "600",
+        color: "#111827",
+        marginBottom: 14
+    },
+    scanLabel: {
+        fontSize: getFontSize(13),
+        color: "#6b7280",
+        marginBottom: 6
+    },
+    scanInput: {
+        borderWidth: 1,
+        borderColor: "#e5e7eb",
+        paddingVertical: 10,
+        paddingHorizontal: 12,
+        borderRadius: 12,
+        fontSize: getFontSize(16),
+        color: "#111827",
+        marginBottom: 14,
+        backgroundColor: "#fafafa"
+    },
+    scanPrimaryBtn: {
+        backgroundColor: Colors.GREEN,
+        paddingVertical: 12,
+        borderRadius: 14,
+        marginBottom: 10
+    },
+    scanPrimaryBtnText: {
+        textAlign: "center",
+        fontWeight: "700",
+        color: "white",
+        letterSpacing: 0.2
+    },
+    scanSecondaryBtn: {
+        backgroundColor: "#ef4444",
+        paddingVertical: 12,
+        borderRadius: 14
+    },
+    scanSecondaryBtnText: {
+        textAlign: "center",
+        fontWeight: "700",
+        color: "white",
+        letterSpacing: 0.2
     }
 });
+
+
 
 
 

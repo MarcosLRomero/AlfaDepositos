@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 // import { useNetInfo } from "@react-native-community/netinfo";
@@ -83,11 +83,11 @@ export default function SendPendingsScreen({ navigation }) {
             // return false;
 
           } else {
-            setShowError("Ocurrió un error al enviar los nuevos proveedores :" + response.message);
+            setShowError("OcurriÃ³ un error al enviar los nuevos proveedores :" + response.message);
             return true;
           }
         } catch (error) {
-          setShowError("Ocurrió un error al enviar los nuevos proveedores :" + error);
+          setShowError("OcurriÃ³ un error al enviar los nuevos proveedores :" + error);
           return true;
         }
       } else {
@@ -126,8 +126,7 @@ export default function SendPendingsScreen({ navigation }) {
 
       ordersSend.push({
         id: item.id,
-        account: item.account,
-        seller: item.id_seller,
+        account: item.account,
         date: item.date,
         total_net: item.net,
         total: item.total,
@@ -145,7 +144,7 @@ export default function SendPendingsScreen({ navigation }) {
       detailSend = [];
       try {
         console.log('ORDENES: ', ordersSend)
-        const response = await setDataToApi("order/", JSON.stringify(ordersSend));
+        const response = await setDataToApi("order_c/", JSON.stringify(ordersSend));
 
         if (!response.error) {
           try {
@@ -154,16 +153,16 @@ export default function SendPendingsScreen({ navigation }) {
 
             ordersSend = [];
           } catch (e) {
-            setShowError("Error al eliminar los comprobantes enviados. No envie nuevamente por que se duplicarían. : " + e);
+            setShowError("Error al eliminar los comprobantes enviados. No envie nuevamente por que se duplicarÃ­an. : " + e);
             return true;
           }
         } else {
           console.log("[SYNC][orders] response error", response);
-          setShowError("Ocurrió un error al enviar los comprobantes: " + (response.message || "Error desconocido"));
+          setShowError("OcurriÃ³ un error al enviar los comprobantes: " + (response.message || "Error desconocido"));
           return true;
         }
       } catch (error) {
-        setShowError("Ocurrió un error al enviar los comprobantes: " + error);
+        setShowError("OcurriÃ³ un error al enviar los comprobantes: " + error);
         return true;
       }
     }
@@ -209,15 +208,15 @@ export default function SendPendingsScreen({ navigation }) {
             await Payment.destroyAll();
             return false;
           } catch (e) {
-            setShowError("Error al eliminar las cobranzas enviadas. No envie nuevamente por que se duplicarían. : " + e);
+            setShowError("Error al eliminar las cobranzas enviadas. No envie nuevamente por que se duplicarÃ­an. : " + e);
             return true;
           }
         } else {
-          setShowError("Ocurrió un error al enviar las cobranzas : " + response.message);
+          setShowError("OcurriÃ³ un error al enviar las cobranzas : " + response.message);
           return true;
         }
       } catch (error) {
-        setShowError("Ocurrió un error al enviar las cobranzas : " + error);
+        setShowError("OcurriÃ³ un error al enviar las cobranzas : " + error);
         return true;
       }
     } else {
@@ -279,15 +278,15 @@ export default function SendPendingsScreen({ navigation }) {
             await Task.destroyAll();
             return false;
           } catch (e) {
-            setShowError("Error al eliminar las tareas enviadas. No envie nuevamente por que se duplicarían. : " + e);
+            setShowError("Error al eliminar las tareas enviadas. No envie nuevamente por que se duplicarÃ­an. : " + e);
             return true;
           }
         } else {
-          setShowError("Ocurrió un error al enviar las tareas :" + response.message);
+          setShowError("OcurriÃ³ un error al enviar las tareas :" + response.message);
           return true;
         }
       } catch (error) {
-        setShowError("Ocurrió un error al enviar las tareas :" + error);
+        setShowError("OcurriÃ³ un error al enviar las tareas :" + error);
         return true;
       }
     } else {
@@ -322,15 +321,15 @@ export default function SendPendingsScreen({ navigation }) {
 
             return false;
           } catch (e) {
-            setShowError("Error al eliminar los datos de visitas. No envie nuevamente por que se duplicarían. : " + e);
+            setShowError("Error al eliminar los datos de visitas. No envie nuevamente por que se duplicarÃ­an. : " + e);
             return true;
           }
         } else {
-          setShowError("Ocurrió un error al enviar los datos de visitas :" + response.message);
+          setShowError("OcurriÃ³ un error al enviar los datos de visitas :" + response.message);
           return true;
         }
       } catch (error) {
-        setShowError("Ocurrió un error al enviar los datos de visitas :" + error);
+        setShowError("OcurriÃ³ un error al enviar los datos de visitas :" + error);
         return true;
       }
     } else {
@@ -352,13 +351,13 @@ export default function SendPendingsScreen({ navigation }) {
     <SafeAreaView style={[sendPending.mainContainer]}>
       <View style={[sendPending.container]}>
         <Text style={[sendPending.textHeader]}>
-          Este proceso enviará todos los movimientos pendientes de sincronización, y una vez confirmada la recepción del servidor, los eliminará de la
+          Este proceso enviarÃ¡ todos los movimientos pendientes de sincronizaciÃ³n, y una vez confirmada la recepciÃ³n del servidor, los eliminarÃ¡ de la
           base local.
         </Text>
 
         <Image style={[sendPending.imageHeader]} source={iconSendPending} />
 
-        {/* {!netInfo.isConnected && <Text style={{ marginBottom: 10, color: "red" }}>No dispone de conexión a internet</Text>} */}
+        {/* {!netInfo.isConnected && <Text style={{ marginBottom: 10, color: "red" }}>No dispone de conexiÃ³n a internet</Text>} */}
 
 
         {showError == "" ? (
@@ -393,3 +392,4 @@ export default function SendPendingsScreen({ navigation }) {
     </SafeAreaView>
   );
 }
+
