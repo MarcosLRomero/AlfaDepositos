@@ -16,8 +16,8 @@ export default function ConfigurationScreen({ navigation, route }) {
   const { firstIn = null } = route?.params || {}
 
   const [config, setConfig] = useState({
-    //API_URI: "http://alfanetac.ddns.net:7705/api/v2/",
-    API_URI: 'http://192.168.1.36:5000/api/v2/',
+    API_URI: "http://alfanetac.ddns.net:7705/api/v2/",
+    //API_URI: 'http://192.168.1.36:5000/api/v2/',
     API_KEY: "",
     ALFA_ACCOUNT: "112010001",
     //ALFA_DATABASE_ID: "156",
